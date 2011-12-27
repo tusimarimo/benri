@@ -1,0 +1,18 @@
+<div class="show">
+
+<ul>
+<li class="editBtn"><%= link_to '編集する', edit_browser_path(@browsers) %></li>
+<li class="removeBtn"><%= link_to '削除する', @browsers, confirm: '本当に削除してよいですか', method: :delete %></li>
+</ul>
+
+<dl>
+<dt>ブラウザ</dt>
+<dd><%= @browser.name %></dd>
+</dl>
+
+<dl>
+<dt>バージョン</dt>
+<dd><%= @browser.version %></dd>
+</dl>
+
+</div>

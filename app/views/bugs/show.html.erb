@@ -1,0 +1,23 @@
+<div class="show">
+
+<ul>
+<li class="editBtn"><%= link_to '編集する', edit_bug_path(@bug) %></li>
+<li class="removeBtn"><%= link_to '削除する', @bug, confirm: '本当に削除してよいですか', method: :delete %></li>
+</ul>
+
+<dl>
+<dt>バグ</dt>
+<dd><%= @bug.title %></dd>
+</dl>
+
+<dl>
+<dt>詳細</dt>
+<dd><%= @bug.detail %></dd>
+</dl>
+
+<dl>
+<dt>対処法</dt>
+<dd><%= @bug.process %></dd>
+</dl>
+</div>
+

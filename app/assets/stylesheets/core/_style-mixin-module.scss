@@ -1,0 +1,93 @@
+@charset "utf-8";
+
+//
+// Module
+//
+
+//--------------------------------------------------
+// @:Common
+//--------------------------------------------------
+
+@mixin MdColor($color) {
+	&,
+	&:link,
+	&:visited,
+	&:hover,
+	&:active,
+	&:focus {
+		color: $color !important;
+	}
+}
+
+@mixin MdMargin {
+	// margin-top
+	@for $i from 0 through 20 {
+		@include spacing(margin, top, $i);
+	}
+	$i: 30;
+	@while $i <= 50 {
+		@include spacing(margin, top, $i);
+		$i: $i + 10;
+	}
+	// margin-bottom
+	@for $i from 0 through 20 {
+		@include spacing(margin, bottom, $i);
+	}
+	$i: 30;
+	@while $i <= 50 {
+		@include spacing(margin, bottom, $i);
+		$i: $i + 10;
+	}
+	// negative margin-top
+	@for $i from 1 through 20 {
+		@include spacing(margin, top, -$i);
+	}
+	$i: 30;
+	@while $i <= 50 {
+		@include spacing(margin, top, -$i);
+		$i: $i + 10;
+	}
+	// negative margin-bottom
+	@for $i from 1 through 20 {
+		@include spacing(margin, bottom, -$i);
+	}
+	$i: 30;
+	@while $i <= 50 {
+		@include spacing(margin, bottom, -$i);
+		$i: $i + 10;
+	}
+}
+
+@mixin MdSeparator01($color: false, $margin: false) {
+	@include inline-block;
+	width: 0;
+	overflow: hidden;
+	@if $margin {
+		margin-left: $margin;
+		margin-right: $margin;
+	}
+	@if $color {
+		border-left: 1px solid #{$color};
+	} @else {
+		border-left-width: 1px;
+		border-left-style: solid;
+	}
+	vertical-align: -1px;
+	@if $support-ie6 or $support-ie7 {
+		*vertical-align: middle;
+		//*vertical-align: 4px; [TODO] 要調査
+	}
+}
+
+@mixin MdSeparator02($color: false, $margin: false) {
+	@include inline-block;
+	@if $margin {
+		margin-left: $margin;
+		margin-right: $margin;
+	}
+	@if $color {
+		color: #{$color};
+	}
+	vertical-align: 1px;
+}
+

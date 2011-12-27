@@ -1,0 +1,1323 @@
+@charset "utf-8";
+
+//
+// Reset
+//
+// * reset-naver
+// * reset-naver-ios
+// * old_reset-naver [TMP]
+// * reset-html5doctor
+// * reset-normlize-css
+// * reset-option-*** [オプションのリセット用Mixin]
+//
+// html5doctorやnormalize.cssにはあるけど、
+// 使用しないリセットスタイルも最後に残しています。
+//
+
+@mixin reset-naver {
+	//
+	// [Reset CSS]
+	// 
+	// このファイルはいわゆるReset CSSです。
+	// Reset CSSはブラウザー間の差異を吸収する事のみを目的として使用します。
+	// SUIにて承認が下りない限り内容の変更はしないでください。
+	// また、Reset CSSを差し替えたプロジェクトでは
+	// 全て同じReset CSSを使用するように管理してください。
+	//
+
+	// TOC
+	// #1. 一般的なリセット
+	// #2. NAVERサービス向けリセット
+
+	/*
+	--------------------------------------------------
+	Reset Style
+	--------------------------------------------------
+	*/
+
+//
+// #1. 一般的なリセット
+//
+// html5doctorとnormalize.cssなどから
+// 流用したリセットスタイルです。
+//
+
+//
+// @:Base
+// ========================================
+
+	// @:ほとんどの要素でmargin, padding, font-sizeをリセット
+	//
+	@if $use-html5 {
+		// from html5doctor, normalize.css
+		//
+		// [変更点]
+		// * 下記のスタイルは過剰だと思うので削除。
+		//     border: 0;
+		//     outline: 0;
+		//     vertical-align: baseline;
+		//     background: transparent;
+		// * textareaを追加
+		//
+		// 1. 全ブラウザで統一させる。
+		// 2. [html]IE6,7でbodyのfont-sizeをemで指定すると正しくリサイズされない。
+		//    参考: http://clagnut.com/blog/348/#c790
+		//
+		html, body, div, span, object, iframe,
+		h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+		abbr, address, cite, code,
+		del, dfn, em, img, ins, kbd, q, samp,
+		small, strong, sub, sup, var,
+		b, i,
+		dl, dt, dd, ol, ul, li,
+		fieldset, form, label, legend, textarea,
+		table, caption, tbody, tfoot, thead, tr, th, td,
+		article, aside, canvas, details, figcaption, figure,
+		footer, header, hgroup, menu, nav, section, summary,
+		time, mark, audio, video {
+			margin: 0;       // 1
+			padding: 0;      // 1
+			font-size: 100%; // 2
+		}
+	} @else {
+		//
+		// HTML5の要素を除いてリセット
+		//
+		html, body, div, span, object, iframe,
+		h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+		abbr, address, cite, code,
+		del, dfn, em, img, ins, kbd, q, samp,
+		small, strong, sub, sup, var,
+		b, i,
+		dl, dt, dd, ol, ul, li,
+		fieldset, form, label, legend, textarea,
+		table, caption, tbody, tfoot, thead, tr, th, td {
+			margin: 0;
+			padding: 0;
+			font-size: 100%;
+		}
+	}
+
+	// @:縦スクロールバーを常時表示
+	//
+	html {
+		overflow-y: scroll;
+	}
+
+	// @:IE6,7,8,9とFx3のためにdisplayを指定。
+	// from html5doctor
+	//
+	@if $use-html5 {
+		article, aside, details, figcaption, figure,
+		footer, header, hgroup, menu, nav, section {
+			display: block;
+		}
+	}
+
+//
+// @:Text
+// ========================================
+
+	// @:b,strongのスタイル調整。
+	// Fx3,4とSf4,5とChではbolderが指定されているので上書き。
+	// from normalize.css
+	b,
+	strong {
+		font-weight: bold;
+	}
+
+//
+// @:Lists
+// ========================================
+
+	// @:ネイティブのリストマーカーは使用しない。
+	//
+	@if $use-html5 {
+		nav, ol, ul {
+			list-style: none;
+		}
+	} @else {
+		ol, ul {
+			list-style: none;
+		}
+	}
+
+//
+// @:Embedded content
+// ========================================
+
+	// @:imgのスタイル調整
+	// 1. IE6,7,8,9でのaタグ内の時のボーダーを非表示に。
+	// 2. 画像の下に隙間ができないようにする。
+	//
+	img {
+		border: 0; // 1
+		vertical-align: top; // 2
+	}
+
+//
+// @:Tables
+// ========================================
+
+	// @:セルとセルの間のスペースを削除。
+	//
+	table {
+		border-collapse: collapse;
+		border-spacing: 0;
+	}
+
+//
+// @:Forms
+// ========================================
+
+	// @:bodyのテキストスタイルを適用しスタイルを統一する。
+	//
+	input,
+	button,
+	textarea {
+		@include body-text-style;
+// [TODO] font-familyの指定だけでもいいかも？
+// normalize.cssはsans-serifだけ指定してた。
+//	font-family: $body-font-family;
+// あとbodyのfont-familyの指定の前に指定しているけど、
+// 正しく適用されるか検証が必要。
+		//
+		@if $body-font-family-win {
+			body.ExOsWin & {
+				font-family: #{$body-font-family-win};
+			}
+		}
+	}
+
+	// @:select,input,buttonのスタイル調整。
+	// 1. 全ブラウザでフォントサイズを継承しない問題を解消。
+	// 2. IE6,7とFx3,4とSf5とChでmarginが異なるので統一。
+	// 3. 全ブラウザで表示位置を調整する。
+	// from normalize.css
+	//
+	// [変更点]
+	// * textareaは別の場所で同じ指定があるので削除。
+	//
+	select,
+	input,
+	button {
+		font-size: 100%; // 1
+		margin: 0; // 2
+		vertical-align: baseline; // 3
+		@if $support-ie6 or $support-ie7 {
+			*vertical-align: middle; // 3
+		}
+	}
+	// [TODO]
+	// 少なからず影響がありそうなので検証が必要かも。
+	// html5doctorでは下記のように指定されていたし。
+	// input, select {
+	// 	vertical-align:middle;
+	// }
+	//
+
+	// @:buttonとinputのスタイル調整。
+	// 1. Fx3,4ではUAのスタイルシートでline-height:normal !important;が指定されている。
+	// 2. IE6,7の内側に余計な余白を削除する。
+	// from normalize.css
+	//
+	button,
+	input {
+		line-height: normal; // 1
+		@if $support-ie6 or $support-ie7 {
+			*overflow: visible;  // 2
+		}
+	}
+
+	// @:ボタン系のカーソルのスタイルを上書き
+	// from normalize.css
+	//
+	button,
+	html input[type="button"],
+	input[type="reset"],
+	input[type="submit"] {
+		cursor: pointer;
+	}
+
+	// @:チェックボックスとラジオボタンのスタイル調整。
+	// 1. IE8,9ではcontent-boxになっているので上書き。
+	// 2. IE8,9で余計な余白を削除。
+	// from normalize.css
+	//
+	input[type="checkbox"],
+	input[type="radio"] {
+		box-sizing: border-box; // 1
+		padding: 0; // 2
+	}
+
+	// @:searchタイプのスタイル調整。
+	// 1. Sf5とChではsearchfieldになっている。textタイプと同じ値で上書き。
+	// 2. Sf5とChではborder-boxになっている。textタイプと同じ値で上書き。念のため他のブラウザにも指定。
+	// from normalize.css
+	//
+	// 3. フォーカス時に表示されるアウトラインと要素の間の隙間を削除。
+	// 4. 入力領域の左側のpaddingではない余白を削除。
+	// デフォルトでは下記のスタイル
+	// -webkit-appearance: searchfield-decoration;
+	// display: inline-block;
+	//
+	// 参考：terkel.jp/archives/2010/08/reset-input-type-search-style/
+	input[type="search"] {
+		-webkit-appearance: textfield; // 1
+		@include box-sizing(content-box); // 2
+	}
+	input[type="search"]:focus {
+		outline-offset: -2px; // 3
+	}
+	input[type="search"]::-webkit-search-decoration {
+		display: none; // 4
+	
+	}
+
+	// @:textareaのスタイル調整
+	// 1. デフォルトのスクロールバーを非表示。
+	// 2. 全ブラウザで可読性向上と縦位置の統一。from normalize.css
+	//
+	textarea {
+		overflow-x: hidden;  // 1
+		overflow-y: auto;    // 1
+		vertical-align: top; // 2
+	}
+
+//
+// @:Others
+// ========================================
+
+	// @:IE6,7用のzoomの設定
+	//
+	@if $support-ie6 or $support-ie7 {
+		// Zoom for hasLayout bug
+		@if $use-html5 {
+			h1, h2, h3, h4, h5, h6,
+			p, dl, dt, dd, ul, ol, li, table, th, td,
+			div, blockquote, pre,
+			form, fieldset, legend,
+			article, aside, details, figcaption, figure,
+			footer, header, hgroup, menu, nav, section {
+				*zoom: 1;
+			}
+		} @else {
+			h1, h2, h3, h4, h5, h6,
+			p, dl, dt, dd, ul, ol, li, table, th, td,
+			div, blockquote, pre,
+			form, fieldset, legend {
+				*zoom: 1;
+			}
+		}
+	}
+
+
+//
+// #2. NAVERサービス向けリセット
+//
+// NAVERサービスでよく使うリセットスタイルです。
+//
+
+//
+// @:Links
+// ========================================
+
+	// @:フォーカス時のoutlineを非表示にする。
+	:focus {
+		outline: 0;
+	}
+
+//
+// @:Text
+// ========================================
+
+	// @:見出しは太字にしない。
+	//
+	h1, h2, h3, h4, h5, h6 {
+		font-weight: normal;
+	}
+
+	// @:em,citeは斜体にしない。
+	//
+	em, cite {
+		font-style: normal;
+	}
+
+//
+// @:Tables
+// ========================================
+
+	// @:ボーダーは表示しない。
+	//
+	table, th, td {
+		border: none;
+	}
+
+//
+// @:Forms
+// ========================================
+
+	// @:fieldsetのボーダーを非表示にする。
+	fieldset {
+		border: none;
+	}
+
+	// @:legendは非表示にする。
+	//
+	fieldset legend {
+		@include hidden;
+	}
+
+	// @:IE6,7でinputの表示位置を調整する。
+	// [NOTE]
+	// 検証ページが見当たらない。
+	// IE7の対応が終わったら削除する。
+	//
+	@if $support-ie6 or $support-ie7 {
+		input {
+			*margin: -1px 0;
+		}
+	}
+
+//
+// @:Others
+// ========================================
+
+	// @:hrは非表示にする。
+	//
+	hr {
+		display: none;
+	}
+
+} // [end] mixin reset-naver
+
+@mixin reset-naver-ios {
+	// @:iOSでオリエンテーションを変更後にテキストサイズ調整が行われるのを防ぐ（ユーザーの操作も可能なまま）。
+	// www.456bereastreet.com/archive/201012/controlling_text_size_in_safari_for_ios_without_disabling_user_zoom/
+	// from normalize.css
+	//
+	html {
+		-webkit-text-size-adjust: 100%;
+		-ms-text-size-adjust: 100%;
+	}
+
+	// @:Corrects inability to style clickable 'input' types in iOS
+	// from normalize.css
+	//
+	// [TODO] 要検証・翻訳。。
+	//
+	button,
+	html input[type="button"],
+	input[type="reset"],
+	input[type="submit"] {
+		-webkit-appearance: button;
+	}
+
+}
+
+@mixin old_reset-naver {
+	//
+	// [Reset CSS]
+	// 
+	// このファイルはいわゆるReset CSSです。
+	// Reset CSSはブラウザー間の差異を吸収する事のみを目的として使用します。
+	// SUIにて承認が下りない限り内容の変更はしないでください。
+	// また、Reset CSSを差し替えたプロジェクトでは
+	// 全て同じReset CSSを使用するように管理してください。
+	//
+
+	/*
+	--------------------------------------------------
+	Reset Style
+	--------------------------------------------------
+	*/
+
+	body,
+	h1,h2,h3,h4,h5,h6,
+	p,dl,dt,dd,ul,ol,li,th,td,
+	div,blockquote,pre,
+	form,fieldset,input,textarea{margin:0;padding:0;}
+	h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}
+	ol,ul{list-style:none;}
+	table{border-collapse:collapse;border-spacing:0;}
+	img,fieldset,table,th,td{border:none;}
+	input{*margin:-1px 0;}
+	input,textarea{font-size:1.0em;}
+	em,cite{font-style:normal;}
+	small{font-size:100%;}
+}
+
+@mixin reset-html5doctor {
+	/*!!
+	html5doctor.com Reset Stylesheet
+	v1.6.1
+	Last Updated: 2010-09-17
+	Author: Richard Clark - http://richclarkdesign.com 
+	Twitter: @rich_clark
+	*/
+
+	html, body, div, span, object, iframe,
+	h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+	abbr, address, cite, code,
+	del, dfn, em, img, ins, kbd, q, samp,
+	small, strong, sub, sup, var,
+	b, i,
+	dl, dt, dd, ol, ul, li,
+	fieldset, form, label, legend,
+	table, caption, tbody, tfoot, thead, tr, th, td,
+	article, aside, canvas, details, figcaption, figure,
+	footer, header, hgroup, menu, nav, section, summary,
+	time, mark, audio, video {
+		margin:0;
+		padding:0;
+		border:0;
+		outline:0;
+		font-size:100%;
+		vertical-align:baseline;
+		background:transparent;
+	}
+
+	body {
+		line-height:1;
+	}
+
+	article,aside,details,figcaption,figure,
+	footer,header,hgroup,menu,nav,section {
+		display:block;
+	}
+
+	nav ul {
+		list-style:none;
+	}
+
+	blockquote, q {
+		quotes:none;
+	}
+
+	blockquote:before, blockquote:after,
+	q:before, q:after {
+		content:'';
+		content:none;
+	}
+
+	a {
+		margin:0;
+		padding:0;
+		font-size:100%;
+		vertical-align:baseline;
+		background:transparent;
+	}
+
+	// change colours to suit your needs
+	ins {
+		background-color:#ff9;
+		color:#000;
+		text-decoration:none;
+	}
+
+	// change colours to suit your needs
+	mark {
+		background-color:#ff9;
+		color:#000;
+		font-style:italic;
+		font-weight:bold;
+	}
+
+	del {
+		text-decoration: line-through;
+	}
+
+	abbr[title], dfn[title] {
+		border-bottom:1px dotted;
+		cursor:help;
+	}
+
+	table {
+		border-collapse:collapse;
+		border-spacing:0;
+	}
+
+	// change border colour to suit your needs
+	hr {
+		display:block;
+		height:1px;
+		border:0;
+		border-top:1px solid #cccccc;
+		margin:1em 0;
+		padding:0;
+	}
+
+	input, select {
+		vertical-align:middle;
+	}
+} // [end] mixin reset-html5doctor
+
+@mixin reset-normlize-css {
+	/*!! normalize.css 2011-07-12T10:51 UTC · http://github.com/necolas/normalize.css */
+
+	// ==========================================================================
+	//   HTML5 element display
+	// ==========================================================================
+
+	// Corrects block display not defined in IE6/7/8/9 & FF3
+	article,
+	aside,
+	details,
+	figcaption,
+	figure,
+	footer,
+	header,
+	hgroup,
+	nav,
+	section {
+		display: block;
+	}
+
+	// Corrects inline-block display not defined in IE6/7/8/9 & FF3
+	// Known limitation: IE6 will not apply style for 'audio[controls]'
+	audio[controls],
+	canvas,
+	video {
+		display: inline-block;
+		*display: inline;
+		*zoom: 1;
+	}
+
+	// ==========================================================================
+	// Base
+	// ==========================================================================
+
+	// 1. Corrects text resizing oddly in IE6/7 when body font-size is set using em units
+	//    http://clagnut.com/blog/348/#c790
+	// 2. Keeps page centred in all browsers regardless of content height
+	// 3. Removes Android and iOS tap highlight color to prevent entire container being highlighted
+	//    www.yuiblog.com/blog/2010/10/01/quick-tip-customizing-the-mobile-safari-tap-highlight-color/
+	// 4. Prevents iOS text size adjust after orientation change, without disabling user zoom
+	//    www.456bereastreet.com/archive/201012/controlling_text_size_in_safari_for_ios_without_disabling_user_zoom/
+	html {
+		font-size: 100%; /* 1 */
+		overflow-y: scroll; /* 2 */
+		-webkit-tap-highlight-color: rgba(0,0,0,0); /* 3 */
+		-webkit-text-size-adjust: 100%; /* 4 */
+		-ms-text-size-adjust: 100%; /* 4 */
+	}
+
+	// Addresses margins handled incorrectly in IE6/7
+	body {
+		margin: 0;
+	}
+
+	// Addresses font-family inconsistency between 'textarea' and other form elements.
+	body,
+	button,
+	input,
+	select,
+	textarea {
+		font-family: sans-serif;
+	}
+
+	// =============================================================================
+	// Links
+	// =============================================================================
+	a {
+		color: #00e;
+	}
+	a:visited {
+		color: #551a8b;
+	}
+
+	// Addresses outline displayed oddly in Chrome
+	a:focus {
+		outline: thin dotted;
+	}
+
+	// Improves readability when focused and also mouse hovered in all browsers
+	// people.opera.com/patrickl/experiments/keyboard/test
+	a:hover,
+	a:active {
+		outline: 0;
+	}
+
+	// =============================================================================
+	// Typography
+	// =============================================================================
+
+	// Addresses styling not present in IE7/8/9, S5, Chrome
+	abbr[title] {
+		border-bottom: 1px dotted;
+	}
+
+	// Addresses style set to 'bolder' in FF3/4, S4/5, Chrome
+	b,
+	strong {
+		font-weight: bold;
+	}
+	blockquote {
+		margin: 1em 40px;
+	}
+
+	// Addresses styling not present in S5, Chrome
+	dfn {
+		font-style: italic;
+	}
+
+	// Addresses styling not present in IE6/7/8/9
+	mark {
+		background: #ff0;
+		color: #000;
+	}
+
+	// Corrects font family set oddly in IE6, S5, Chrome
+	// en.wikipedia.org/wiki/User:Davidgothberg/Test59
+	pre,
+	code,
+	kbd,
+	samp {
+		font-family: monospace, monospace;
+		_font-family: 'courier new', monospace;
+		font-size: 1em;
+	}
+
+	// Improves readability of pre-formatted text in all browsers
+	pre {
+		white-space: pre;
+		white-space: pre-wrap;
+		word-wrap: break-word;
+	}
+
+	// 1. Addresses CSS quotes not supported in IE6/7
+	// 2. Addresses quote property not supported in S4
+
+	// 1
+	q {
+		quotes: none;
+	}
+
+	// 2
+	q:before,
+	q:after {
+		content: '';
+		content: none;
+	}
+	small {
+		font-size: 75%;
+	}
+
+	// Prevents sub and sup affecting line-height in all browsers
+	// gist.github.com/413930
+	sub,
+	sup {
+		font-size: 75%;
+		line-height: 0;
+		position: relative;
+		vertical-align: baseline;
+	}
+	sup {
+		top: -0.5em;
+	}
+	sub {
+		bottom: -0.25em;
+	}
+
+	// =============================================================================
+	// Lists
+	// =============================================================================
+	ul,
+	ol {
+		margin: 1em 0;
+		padding: 0 0 0 40px;
+	}
+	dd {
+		margin: 0 0 0 40px;
+	}
+	nav ul,
+	nav ol {
+		list-style: none;
+	}
+
+	// =============================================================================
+	// Embedded content
+	// =============================================================================
+
+	// 1. Removes border when inside 'a' element in IE6/7/8/9
+	// 2. Improves image quality when scaled in IE7
+	//    code.flickr.com/blog/2008/11/12/on-ui-quality-the-little-things-client-side-image-resizing/
+	img {
+		border: 0; // 1
+		-ms-interpolation-mode: bicubic; // 2
+	}
+
+	// Corrects overflow displayed oddly in IE9
+	svg:not(:root) {
+		overflow: hidden;
+	}
+
+	// =============================================================================
+	// Figures
+	// =============================================================================
+
+	// Addresses margin not present in IE6/7/8/9, S5, O11
+	figure {
+		margin: 0;
+	}
+
+	// =============================================================================
+	// Forms
+	// =============================================================================
+
+	// Corrects margin displayed oddly in IE6/7
+	form {
+		margin: 0;
+	}
+
+	// Define consistent margin and padding
+	fieldset {
+		margin: 0 2px;
+		padding: 0.35em 0.625em 0.75em;
+	}
+
+	// 1. Corrects color not being inherited in IE6/7/8/9
+	// 2. Corrects alignment displayed oddly in IE6/7
+	legend {
+		border: 0; // 1
+		*margin-left: -7px; // 2
+	}
+
+	// 1. Corrects font size not being inherited in all browsers
+	// 2. Addresses margins set differently in IE6/7, F3/4, S5, Chrome
+	// 3. Improves appearance and consistency in all browsers
+	button,
+	input,
+	select,
+	textarea {
+		font-size: 100%; // 1
+		margin: 0; // 2
+		vertical-align: baseline; // 3
+		*vertical-align: middle; // 3
+	}
+
+	// 1. Addresses FF3/4 setting line-height using !important in the UA stylesheet
+	// 2. Corrects inner spacing displayed oddly in IE6/7
+	button,
+	input {
+		line-height: normal; // 1
+		*overflow: visible;  // 2
+	}
+
+	// Corrects overlap and whitespace issue for buttons and inputs in IE6/7
+	// Known issue: reintroduces inner spacing
+	table button,
+	table input {
+		*overflow: auto;
+	}
+
+	// 1. Improves usability and consistency of cursor style between image-type 'input' and others
+	// 2. Corrects inability to style clickable 'input' types in iOS
+	button,
+	html input[type="button"],
+	input[type="reset"],
+	input[type="submit"] {
+		cursor: pointer; // 1
+		-webkit-appearance: button; // 2
+	}
+
+	// Addresses box sizing set to content-box in IE8/9
+	input[type="checkbox"],
+	input[type="radio"] {
+		box-sizing: border-box;
+	}
+
+	// 1. Addresses appearance set to searchfield in S5, Chrome
+	// 2. Addresses box sizing set to border-box in S5, Chrome (include -moz to future-proof)
+	input[type="search"] {
+		-webkit-appearance: textfield; // 1
+		-moz-box-sizing: content-box;
+		-webkit-box-sizing: content-box; // 2
+		box-sizing: content-box;
+	}
+
+	// Corrects inner padding displayed oddly in S5, Chrome on OSX
+	input[type="search"]::-webkit-search-decoration {
+		-webkit-appearance: none;
+	}
+
+	// Corrects inner padding and border displayed oddly in FF3/4
+	// www.sitepen.com/blog/2008/05/14/the-devils-in-the-details-fixing-dojos-toolbar-buttons/
+	button::-moz-focus-inner,
+	input::-moz-focus-inner {
+		border: 0;
+		padding: 0;
+	}
+
+	// 1. Removes default vertical scrollbar in IE6/7/8/9
+	// 2. Improves readability and alignment in all browsers
+	textarea {
+		overflow: auto; // 1
+		vertical-align: top; // 2
+	}
+
+
+	// =============================================================================
+	// Tables
+	// =============================================================================
+
+	// Remove most spacing between table cells
+	table {
+		border-collapse: collapse;
+		border-spacing: 0;
+	}
+} // [end] mixin reset-normalize.css
+
+//
+// オプションのリセット用Mixin
+//
+// これより下のMixinは通常はあまり必要ないスタイルです。
+// 必要に応じて適宜 @include して利用してください。
+//
+
+//
+// @:Base
+// ========================================
+
+@mixin reset-option-base-1 {
+	// @:IE6,7,8,9とFx3のためにdisplayを指定。
+	// from normalize.css
+	//
+	audio,
+	canvas,
+	video {
+		@include inline-block;
+	}
+}
+
+@mixin reset-option-base-2 {
+	// @:モダンブラウザでcontrols属性がないaudio要素を非表示。
+	// from normalize.css
+	//
+	audio:not([controls]) {
+		display: none;
+	}
+}
+
+@mixin reset-option-base-3 {
+	// @:IE7,8,9とFx3とSf4ではスタイリングされていない。
+	// 既知の問題：このセレクタはIE6はサポートしていない。
+	// from normalize.css
+	//
+	[hidden] {
+		display: none;
+	}
+}
+
+//
+// @:Text
+// ========================================
+
+@mixin reset-option-text-1 {
+	// @:abbr,dfnのスタイル調整。
+	// 1. カーソルをヘルプにする。
+	// 2. IE7,8,9とSf5とChではスタイリングされていない。
+	// 3. 斜体で表示するブラウザがあるので上書き指定する。
+	// from html5doctor, normalize.css
+	abbr[title],
+	dfn[title] {
+		cursor: help; // 1
+		border-bottom: 1px dotted; // 2
+		font-style: normal; // 3
+	}
+}
+
+@mixin reset-option-text-2 {
+	// @:qとblockquoteのスタイル調整。
+	// 1. IE6,7ではquotesはサポートされていない。
+	// 2. Sf4ではquoteプロパティがサポートされていない。
+	// from html5doctor, normalize.css
+	//
+	// normalize.cssではblockquoteへのスタイル指定はなかった。
+	blockquote,
+	q {
+		quotes: none; // 1
+		//
+		&:before,
+		&:after {
+			content: '';   // 2
+			content: none; // 2
+		}
+	}
+}
+
+@mixin reset-option-text-3 {
+	// @:sup,subのスタイル調整。
+	// 全ブラウザでline-heightの影響を受けるのを防ぐ。
+	// gist.github.com/413930
+	// from normalize.css
+	sup,
+	sub {
+		font-size: 75%;
+		line-height: 0;
+		position: relative;
+		vertical-align: baseline;
+	}
+	sup {
+		top: -0.5em;
+	}
+	sub {
+		bottom: -0.25em;
+	}
+}
+
+@mixin reset-option-text-4 {
+	// @:smallのスタイル調整。
+	small {
+		font-size: 100%;
+	}
+}
+
+@mixin reset-option-text-5 {
+	// @:preのスタイル調整。
+	// 全ブラウザで可読性を向上させる。
+	// from normalize.css
+	pre {
+		white-space: pre;
+		white-space: pre-wrap;
+		word-wrap: break-word;
+	}
+}
+
+@mixin reset-option-text-6 {
+	// @:pre,code,kbd,sampのスタイル調整。
+	// IE6とSf4,5とChではフォントファミリーの指定が良くないので上書き。
+	// en.wikipedia.org/wiki/User:Davidgothberg/Test59
+	// from normalize.css
+	//
+	// [NOTE]
+	// font-sizeの指定がどう影響するのかは不明です。
+	pre,
+	code,
+	kbd,
+	samp {
+		font-family: monospace, serif;
+		@if $support-ie6 {
+			_font-family: 'courier new', monospace;
+		}
+		font-size: 1em;
+	}
+}
+
+//
+// @:Forms
+// ========================================
+
+@mixin reset-option-form-1 {
+	// @:input,button,textareaのボーダーを削除する。
+	// プロジェクト全体でネイティブのスタイルを利用せず、
+	// スタイルをカスタマイズする場合にのみ利用する。
+	//
+	input,
+	button,
+	textarea {
+		border: 0;
+	}
+}
+
+@mixin reset-option-form-2 {
+	// @:iOSのテキスト入力ボックスの影を取り除く。
+	// プロジェクト全体でネイティブのスタイルを利用せず、
+	// スタイルをカスタマイズする場合にのみ利用する。
+	//
+	input[type="text"],
+	input[type="email"],
+	input[type="password"], // for iOS4
+	textarea {
+		-webkit-appearance: none;
+	}
+}
+
+@mixin reset-option-form-3 {
+	// @:SfとChでフォームのテキスト削除ボタン「x」を非表示にする。
+	//
+	input[type="search"]::-webkit-search-cancel-button {
+		display: none;
+	}
+}
+
+
+//
+// html5doctorやnormalize.cssにはあるけど、
+// 使用しないリセットスタイル
+//
+//
+
+//
+// @:Links
+// ========================================
+
+// @:リンクのデフォルトスタイル。
+// from normalize.css
+//
+//	a {
+//		color: #00e;
+//	}
+//
+//	a:visited {
+//		color: #551a8b;
+//	}
+//
+// [含めない理由]
+// リンクのスタイルはbaseで行う。
+//
+
+// @:Chでアウトラインの表示が変なので指定する。
+// from normalize.css
+//
+//	a:focus {
+//		outline: thin dotted;
+//	}
+//
+// [含めない理由]
+// アウトラインは非表示にするため。
+//
+
+// @:全ブラウザでフォーカス・マウスオーバー時の可読性を向上させる。
+// 参考： people.opera.com/patrickl/experiments/keyboard/test
+// from normalize.css
+//
+//	a:hover,
+//	a:active {
+//		outline: 0;
+//	}
+//
+// [含めない理由]
+// フォーカス時のアウトラインは非表示にしているし、
+// マウスオーバー時のアウトラインのスタイル指定は不要。
+//
+
+//
+// @:Text
+// ========================================
+
+// @:blockquoteのスタイル調整。
+// from normalize.css
+//
+//	blockquote {
+//		margin: 1em 40px;
+//	}
+//
+// [含めない理由]
+// この要素をあまり使用しないし、
+// デザインに合わせてスタイル指定するほうがよさそう。
+//
+
+// @:markのスタイル調整。
+// IE6,7,8,9ではスタイリングされていない。
+// from normalize.css
+//
+//	mark {
+//		background: #ff0;
+//		color: #000;
+//	}
+//
+// html5doctorではfont-styleとfont-weightも指定されてた。
+//	/* change colours to suit your needs */
+//	mark {
+//		background-color:#ff9;
+//		color:#000;
+//		font-style:italic;
+//		font-weight:bold;
+//	}
+//
+// [含めない理由]
+// まだ、この要素をあまり使用しないので。
+// 使用する場合、必要な箇所でのみデザインに合わせて指定する。
+//
+// mark {
+//		background: transparent;
+//		color: inherit;
+//	}
+//
+
+// @:smallのスタイル調整。
+// from normalize.css
+//
+//	small {
+//		font-size: 75%;
+//	}
+//
+// [含めない理由]
+// html5ではsmallを使う場所は限られている。
+// オプションのミックスインで100%を指定するので。
+//
+
+// @:ins,delのスタイル調整。
+// from html5doctor
+//
+//	ins {
+//		background-color:#ff9;
+//		color:#000;
+//		text-decoration:none;
+//	}
+//
+//	del {
+//		text-decoration: line-through;
+//	}
+//
+// [含めない理由]
+// これらの要素もあまり使用しないし、
+// デフォルトのスタイルで十分だと思われるため。
+//
+
+//
+// @:Lists
+// ========================================
+
+// @:リストのスタイル調整。
+// from normalize.css
+//
+//	ul,
+//	ol {
+//		margin: 1em 0;
+//		padding: 0 0 0 40px;
+//	}
+//
+//	dd {
+//		margin: 0 0 0 40px;
+//	}
+//
+//	nav ul,
+//	nav ol {
+//		list-style: none;
+//		list-style-image: none;
+//	}
+//
+// [含めない理由]
+// リストのスタイルはリセットのあとで、都度行うため。
+//
+
+//
+// @:Embedded content
+// ========================================
+
+// @:imgのスタイル調整。
+// IE7で画像を拡大縮小時の品質を向上させる。
+// code.flickr.com/blog/2008/11/12/on-ui-quality-the-little-things-client-side-image-resizing/
+// from normalize.css
+//
+//	img {
+//		-ms-interpolation-mode: bicubic;
+//	}
+//
+// [含めない理由]
+// IE8以上からはデフォルトなので指定する必要はない。
+// https://developer.mozilla.org/En/CSS/Image-rendering
+//
+
+//@:svgのスタイル調整。
+// IE9でのoverflow表示の問題を修正
+// from normalize.css
+//
+//	svg:not(:root) {
+//		overflow: hidden;
+//	}
+//
+// [含めない理由]
+// svgを使う箇所が今のところない。
+// この問題がどういうものか…分からない。。
+//
+
+
+//
+// @:Forms
+// ========================================
+
+// @:fieldsetのスタイル調整。
+// marginとpaddingを統一させる。
+// from normalize.css
+//
+//	fieldset {
+//		margin: 0 2px;
+//		padding: 0.35em 0.625em 0.75em;
+//	}
+//
+// [含めない理由]
+// この要素のスタイルは下記を指定しているため。
+// margin: 0;
+// padding: 0;
+// border: none;
+//
+
+// @:legendのスタイル調整。
+// 1. IE6,7,8で色が継承されない問題を解消。
+// 2. IE6,7での表示位置の問題を解消。
+// from normalize.css
+//
+//	legend {
+//		border: 0; /* 1 */
+//		*margin-left: -7px; /* 2 */
+//	}
+//
+// [含めない理由]
+// この要素は表示しないので。
+//
+
+// @:table内のbutton,inputのスタイル調整。
+// IE6,7での重複とwhitespaceの問題を解消する。
+// 既知の問題：内側の余白を再び導入する。
+// from normalize.css
+//
+//	table button,
+//	table input {
+//		*overflow: auto;
+//	}
+//
+// [含めない理由]
+// 対象がIE6,7なので。
+//
+
+// @:button,inputのスタイル調整。
+// Fx3,4で余計なpaddingとborderが表示されるのを防ぐ。
+// from normalize.css
+//
+//	button::-moz-focus-inner,
+//	input::-moz-focus-inner {
+//		border: 0;
+//		padding: 0;
+//	}
+//
+// [含めない理由]
+// 使用する場面は少ないと思われる。
+// 'core/_utility.scss'にあるこのハック用のmixin
+// hack-fx-remove-button-paddingを必要な要素で@includeする。
+//
+
+// @:Sf5とChで余計な余白が表示されるのを防ぐ。
+// normalize.css
+//
+//	input[type="search"]::-webkit-search-decoration {
+//		-webkit-appearance: none;
+//	}
+//
+// [含めない理由]
+// display: none;を指定し、非表示にしているため。
+//
+
+//
+// @:Others
+// ========================================
+
+// @:hrのスタイル調整。
+// from html5doctor
+// /* change border colour to suit your needs */
+//
+//	hr {
+//		display:block;
+//		height:1px;
+//		border:0;
+//		border-top:1px solid #cccccc;
+//		margin:1em 0;
+//		padding:0;
+//	}
+//
+// [含めない理由]
+// hr は非表示にするので。
+//
+

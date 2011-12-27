@@ -1,0 +1,9 @@
+<div class="search">
+<%= form_tag( :controller=>"bugs", :action=>"search" ) do %>
+
+<p class="searchBox"><%= text_field_tag "keyword", "", {:size=>30} %></p>
+<p class="submit"><%= submit_tag "検索" %></p>
+
+<% end %>
+</div>
+

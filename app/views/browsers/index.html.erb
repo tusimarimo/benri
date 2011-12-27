@@ -1,0 +1,19 @@
+<p class="lead">ブラウザ一覧</p>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Version</th>
+<th></th>
+</tr>
+
+<% @browsers.each do |browser| %>
+<tr>
+<td><%= browser.name %></td>
+<td><%= browser.version %></td>
+<td class="showBtn"><%= link_to 'Show', browser %></td>
+</tr>
+<% end %>
+</table>
+
+

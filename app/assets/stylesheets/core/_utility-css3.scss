@@ -1,0 +1,466 @@
+@charset "utf-8";
+
+//
+// Utility - Mixins for CSS3 properties
+//
+
+// @:Variables for vendor-prefixed CSS Properties
+//--------------------------------------------------
+$use-prefix-webkit: true !default;
+$use-prefix-moz   : true !default;
+$use-prefix-ms    : true !default;
+$use-prefix-o     : true !default;
+
+// # @:CSS3 Prefixed Property
+// https://developer.mozilla.org/ja/CSS_Reference
+// http://peter.sh/experiments/vendor-prefixed-css-property-overview/
+@mixin prefixed($property, $property-value) {
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+	@if $use-prefix-ms { -ms-#{$property}: #{$property-value}; }
+	@if $use-prefix-o { -o-#{$property}: #{$property-value}; }
+	#{$property}: #{$property-value};
+}
+
+// # @:border-radius
+// http://www.w3.org/TR/css3-background/#corners
+$default-border-radius-value: 3px !default;
+@mixin border-radius($property-value: $default-border-radius-value, $property-type: shorthand) {
+	$property: border-radius;
+	@if $property-type != shorthand {
+		$property: border-#{$property-type}-radius;  // e.g. 'top-left', 'bottom-left'
+	}
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+	#{$property}: #{$property-value};
+}
+
+// # @:border-image
+// http://www.w3.org/TR/css3-background/#border-images
+//
+// ブラウザの実装状況がまちまちなのでしばらくは引数を細かく分けたMixinを使用してください。
+//@mixin border-image($property-value, $property-type: shorthand) {
+//	$property: border-image;
+//	@if $property-type != shorthand {
+//		$property: $property + "-" + $property-type;  // e.g. 'source', 'slice'
+//	}
+//	// OUTPUT
+//	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+//	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+//	@if $use-prefix-o { -o-#{$property}: #{$property-value}; }
+//	#{$property}: #{$property-value};
+//}
+//
+@mixin border-image($source: false, $slice: false, $slice-fill: false, $width: false, $outset: false, $repeat: false, $property-type: shorthand) {
+	$property: border-image;
+	$property-value: '';
+	$property-value-w3c: '';
+
+	// ショートハンドプロパティかどうか
+	@if $property-type != shorthand {
+		$property: $property + "-" + $property-type;  // e.g. 'source', 'slice'
+	}
+
+	// 引数の値をプロパティの値用の変数（接頭辞付きと付いていないもの）にそれぞれに追加していく。
+	@if $source {
+		$property-value: unquote($source);
+		$property-value-w3c: unquote($source);
+	}
+	@if $slice {
+		$property-value: $property-value + " " + unquote($slice);
+		$property-value-w3c: $property-value-w3c + " " + unquote($slice);
+		// fillキーワードがtrueかfillの場合、接頭辞なしのだけにfillを追加。
+		@if $slice-fill == true or $slice-fill == fill {
+			$property-value-w3c: $property-value + " " + unquote($slice-fill);
+		}
+	}
+	@if $width {
+		$property-value: $property-value + " " + unquote($width);
+		$property-value-w3c: $property-value-w3c + " " + unquote($width);
+	}
+	@if $outset {
+		$property-value: $property-value + " " + unquote($outset);
+		$property-value-w3c: $property-value-w3c + " " + unquote($outset);
+	}
+	@if $repeat {
+		$property-value: $property-value + " " + unquote($repeat);
+		$property-value-w3c: $property-value-w3c + " " + unquote($repeat);
+	}
+
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+	@if $use-prefix-o { -o-#{$property}: #{$property-value}; }
+	#{$property}: #{$property-value-w3c};
+
+// Example
+//   Sass
+//   @include border-image("url(/path/to/img.png)", "24 28 30 26", fill, $repeat: "round");
+//
+//   // 個別プロパティで使う
+//   @include border-image($slice: "20 20", $slice-fill: fill, $property-type: slice);
+//
+//   CSS
+//   -webkit-border-image: url(/path/to/img.png) 24 28 30 26 round;
+//   -moz-border-image: url(/path/to/img.png) 24 28 30 26 round;
+//   -o-border-image: url(/path/to/img.png) 24 28 30 26 round;
+//   border-image: url(/path/to/img.png) 24 28 30 26 fill round;
+//
+//   -webkit-border-image-slice: 20 20;
+//   -moz-border-image-slice: 20 20;
+//   -o-border-image-slice: 20 20;
+//   border-image-slice: 20 20 fill;
+//
+//   ※fillキーワードは接頭辞なしのプロパティにだけ出力される。
+}
+
+// # @:background-image: linear-gradient
+// http://www.w3.org/TR/css3-images/#linear-gradients
+@mixin linear-gradient($property-value, $bg-color: false, $bg-url: false) {
+	$property: background-image;
+	$value-prefix: linear-gradient;
+	$property-value: "("+$property-value+")";
+	// OUTPUT
+	@if $bg-url {
+		@if $use-prefix-webkit { #{$property}: url(#{$bg-url}), -webkit-#{$value-prefix}#{$property-value}; }
+		@if $use-prefix-moz { #{$property}: url(#{$bg-url}), -moz-#{$value-prefix}#{$property-value}; }
+		@if $use-prefix-ms { #{$property}: url(#{$bg-url}), -ms-#{$value-prefix}#{$property-value}; }
+		@if $use-prefix-o { #{$property}: url(#{$bg-url}), -o-#{$value-prefix}#{$property-value}; }
+		#{$property}: url(#{$bg-url}), #{$value-prefix}(#{$property-value});
+	} @else {
+		@if $use-prefix-webkit { #{$property}: -webkit-#{$value-prefix}#{$property-value}; }
+		@if $use-prefix-moz { #{$property}: -moz-#{$value-prefix}#{$property-value}; }
+		@if $use-prefix-ms { #{$property}: -ms-#{$value-prefix}#{$property-value}; }
+		@if $use-prefix-o { #{$property}: -o-#{$value-prefix}#{$property-value}; }
+		#{$property}: #{$value-prefix}(#{$property-value});
+	}
+	@if $bg-color { background-color: #{$bg-color}; }
+}
+
+// # @:background-image: -webkit-gradient(linear, ...)
+// http://developer.apple.com/library/safari/#documentation/InternetWeb/Conceptual/SafariVisualEffectsProgGuide/Gradients/Gradients.html
+@mixin legacy-linear-gradient($direction, $from, $to, $bg-color: false, $bg-url: false) {
+	$property: background-image;
+	$value-prefix: -webkit-gradient;
+	$type: linear;
+	@if $direction == 'top' {
+		$direction: "left top, left bottom"; // Top -> Bottom
+	} @else if $direction == 'bottom' {
+		$direction: "left bottom, left top"; // Bottom -> Top
+	} @else if $direction == 'left' {
+		$direction: "left top, right top"; // Left -> Right
+	} @else if $direction == 'right' {
+		$direction: "right top, left top"; // Right -> Left
+	} @else if $direction == 'top left' or $direction == 'left top' {
+		$direction: "left top, right bottom"; // LeftTop -> RightBottom
+	} @else if $direction == 'bottom left' or $direction == 'left bottom' {
+		$direction: "left bottom, left top"; // LeftBottom -> RightTop
+	} @else if $direction == 'top right' or $direction == 'right top' {
+		$direction: "right top, left bottom"; // RightTop -> LeftBottom
+	} @else if $direction == 'bottom right' or $direction == 'right bottom'{
+		$direction: "right bottom, left top"; // RightBottom -> LeftTop
+	}
+	$property-value: "#{$value-prefix}(#{$type}, #{$direction}, from(#{$from}), to(#{$to}))";
+	// OUTPUT
+	@if $bg-url {
+		@if $use-prefix-webkit { #{$property}: url(#{$bg-url}), #{$property-value}; }
+		@if $bg-color { background-color: #{$bg-color}; }
+	} @else {
+		@if $use-prefix-webkit { #{$property}: #{$property-value}; }
+		@if $bg-color { background-color: #{$bg-color}; }
+	}
+
+// Example
+//   Sass
+//   @include legacy-linear-gradient("top left", #fff, #999);
+//     OR
+//   @include legacy-linear-gradient("left top", #fff, #999);
+//
+//   CSS
+//   background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#999));
+}
+
+// # @:background-clip
+// http://www.w3.org/TR/css3-background/#the-background-clip
+@mixin background-clip($property-value) {
+	// [NOTE] Doesn't support Firefox 1.0-3.6
+	$property: background-clip;
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	#{$property}: #{$property-value};
+}
+
+// # @:background-origin
+// http://www.w3.org/TR/css3-background/#the-background-origin
+@mixin background-origin($property-value) {
+	// [NOTE] Doesn't support Firefox 1.0-3.6
+	$property: background-origin;
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	#{$property}: #{$property-value};
+}
+
+// # @:background-size
+// http://www.w3.org/TR/css3-background/#the-background-size
+@mixin background-size($property-value) {
+	$property: background-size;
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+	#{$property}: #{$property-value};
+}
+
+// # @:box-shadow
+// http://www.w3.org/TR/css3-background/#box-shadow
+$default-box-shadow-offset-x: 1px !default;
+$default-box-shadow-offset-y: 1px !default;
+$default-box-shadow-blur    : 3px !default; // Negative values are not allowed.
+$default-box-shadow-spread  : 0 !default;
+$default-box-shadow-color   : rgba(#000, 0.5) !default;
+$default-box-shadow-inset   : unquote('') !default; // '' or 'inset'
+$default-box-shadow-values  : "#{$default-box-shadow-offset-x} #{$default-box-shadow-offset-y} #{$default-box-shadow-blur} #{$default-box-shadow-spread} #{$default-box-shadow-color} #{$default-box-shadow-inset}" !default;
+//
+@mixin box-shadow($property-value: $default-box-shadow-values) {
+	$property: box-shadow;
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+	#{$property}: #{$property-value};
+}
+
+// # @:text-shadow
+// http://www.w3.org/TR/css3-text/#text-shadow
+$default-text-shadow-color   : rgba(#000, 0.5) !default;
+$default-text-shadow-offset-x: 1px !default;
+$default-text-shadow-offset-y: 1px !default;
+$default-text-shadow-blur    : 1px !default;
+$default-text-shadow-values  : "#{$default-text-shadow-color} #{$default-text-shadow-offset-x} #{$default-box-shadow-offset-y} #{$default-box-shadow-blur}" !default;
+//
+@mixin text-shadow($property-value: $default-text-shadow-values) {
+	$property: text-shadow;
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+	#{$property}: #{$property-value};
+}
+
+// # @:text-overflow
+// http://dev.w3.org/csswg/css3-ui/#text-overflow
+@mixin text-overflow($property-value: ellipsis) {
+	$property: text-overflow;
+	// OUTPUT
+	@if $use-prefix-o { -o-#{$property}: $property-value; }
+	#{$property}: $property-value;
+}
+
+// # @:box-sizing
+// http://www.w3.org/TR/css3-ui/#box-sizing
+@mixin box-sizing($property-value) {
+	$property: box-sizing;
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: $property-value; } // for iOS
+	@if $use-prefix-moz { -moz-#{$property}: $property-value; }
+	#{$property}: $property-value;
+}
+
+// @:display-box
+@mixin display-box {
+	$property: display;
+	$property-value: box;
+	// OUTPUT
+	@if $use-prefix-webkit { #{$property}: -webkit-#{$property-value}; }
+	@if $use-prefix-moz { #{$property}: -moz-#{$property-value}; }
+	@if $use-prefix-ms { #{$property}: -ms-#{$property-value}; }
+	#{$property}: $property-value;
+}
+
+// @:box-flex
+@mixin box-flex($property-value) {
+	$property: box-flex;
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+	@if $use-prefix-ms { -ms-#{$property}: #{$property-value}; }
+	#{$property}: $property-value;
+}
+
+// # @:placeholder
+@mixin placeholder-color($color, $selector: false) {
+	$property: "color";
+	@if $selector == false {
+		$selector: '';
+	}
+	// OUTPUT
+	#{$selector}::-webkit-input-placeholder {
+		#{$property}: #{$color};
+	}
+	#{$selector}:-moz-placeholder {
+		#{$property}: #{$color};
+	}
+//
+// Example
+//   セレクタの中で使用。第2引数のセレクタとして「&」を指定。
+//   Sass
+//   .selector {
+//       @include placeholder-color("red", "&");
+//   }
+//
+//   CSS
+//   .selector::-webkit-input-placeholder {
+//     color: red;
+//   }
+//   .selector:-moz-placeholder {
+//     color: red;
+//   }
+//
+//
+//   セレクタの外で使用する
+//   Sass
+//   @include placeholder-color("red");
+//
+//   CSS
+//   ::-webkit-input-placeholder {
+//     color: red;
+//   }
+//
+//   :-moz-placeholder {
+//     color: red;
+//   }
+}
+
+// # @:transform
+@mixin transform($property-value) {
+	$property: transform;
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+	@if $use-prefix-ms { -ms-#{$property}: #{$property-value}; }
+	#{$property}: #{$property-value};
+}
+
+// # @:animation
+// http://www.w3.org/TR/css3-animations/#animation-name
+// http://www.w3.org/TR/css3-animations/#animation-duration
+// http://www.w3.org/TR/css3-animations/#animation-timing-function
+// http://www.w3.org/TR/css3-animations/#animation-iteration-count
+// http://www.w3.org/TR/css3-animations/#animation-direction
+// http://www.w3.org/TR/css3-animations/#animation-play-state
+// http://www.w3.org/TR/css3-animations/#animation-trigger
+
+@mixin animation($property-value) {
+	$property: "animation";
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+//	#{$property}: #{$property-value};
+}
+
+@mixin animation-name($property-value) {
+	$property: "animation-name";
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+//	#{$property}: #{$property-value};
+}
+
+@mixin animation-duration($property-value) {
+	$property: "animation-duration";
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+//	#{$property}: #{$property-value};
+}
+
+@mixin animation-timing-function($property-value) {
+	$property: "animation-timing-function";
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+//	#{$property}: #{$property-value};
+}
+
+@mixin animation-iteration-count($property-value) {
+	$property: "animation-iteration-count";
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+//	#{$property}: #{$property-value};
+}
+
+@mixin animation-direction($property-value) {
+	$property: "animation-direction";
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+//	#{$property}: #{$property-value};
+}
+
+@mixin animation-play-state($property-value) {
+	$property: "animation-play-state";
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+//	#{$property}: #{$property-value};
+}
+
+@mixin animation-delay($property-value) {
+	$property: "animation-delay";
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+//	#{$property}: #{$property-value};
+}
+
+// # @:transition
+// http://www.w3.org/TR/css3-transitions/
+@mixin transition($property-value) {
+	$property: transition;
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+//	@if $use-prefix-ms { -ms-#{$property}: #{$property-value}; }
+	@if $use-prefix-o { -o-#{$property}: #{$property-value}; }
+//	#{$property}: #{$property-value};
+}
+
+@mixin transition-property($property-value) {
+	$property: "transition-property";
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+//	@if $use-prefix-ms { -ms-#{$property}: #{$property-value}; }
+	@if $use-prefix-o { -o-#{$property}: #{$property-value}; }
+//	#{$property}: #{$property-value};
+}
+
+@mixin transition-duration($property-value) {
+	$property: "transition-duration";
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+//	@if $use-prefix-ms { -ms-#{$property}: #{$property-value}; }
+	@if $use-prefix-o { -o-#{$property}: #{$property-value}; }
+//	#{$property}: #{$property-value};
+}
+
+@mixin transition-timing-function($property-value) {
+	$property: "transition-timing-function";
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+//	@if $use-prefix-ms { -ms-#{$property}: #{$property-value}; }
+	@if $use-prefix-o { -o-#{$property}: #{$property-value}; }
+//	#{$property}: #{$property-value};
+}
+
+@mixin transition-delay($property-value) {
+	$property: "transition-delay";
+	// OUTPUT
+	@if $use-prefix-webkit { -webkit-#{$property}: #{$property-value}; }
+	@if $use-prefix-moz { -moz-#{$property}: #{$property-value}; }
+//	@if $use-prefix-ms { -ms-#{$property}: #{$property-value}; }
+	@if $use-prefix-o { -o-#{$property}: #{$property-value}; }
+//	#{$property}: #{$property-value};
+}
+

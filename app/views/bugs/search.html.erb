@@ -1,0 +1,17 @@
+<p class="lead">バグを検索します</p>
+
+<table>
+<tr>
+<th width='500'>Title</th>
+<th></th>
+</tr>
+
+<% @bugs.each do |bug| %>
+<tr>
+<td><%= bug.title %></td>
+<td><p class="showBtn"><%= link_to 'Show', bug %></p></td>
+</tr>
+<% end %>
+</table>
+
+

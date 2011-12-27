@@ -1,0 +1,42 @@
+//
+// Base
+//
+
+@mixin base-naver {
+	//
+	// [Base CSS]
+	// 
+	// このファイルは各プロジェクトで効率化及び継承の簡略化のために、
+	// 基本となる装飾を定義するためのCSSです。
+	// bodyのbackgroundやテキストの基本的な色、リンクの基本的な装飾などを定義し、
+	// 作業の効率化や継承活用によるブラウザのレンダリング効率確保を目的としています。
+	//
+
+	/*
+	--------------------------------------------------
+	@:Default Style
+	--------------------------------------------------
+	*/
+
+	body {
+		@if $support-ie6 or $support-ie7 {
+			*position: relative;
+		}
+		@include body-text-style;
+		//
+		@if $body-font-family-win {
+			&.ExOsWin {
+				font-family: $body-font-family-win;
+			}
+		}
+		@if $body-font-family-mac {
+			&.ExOsMac{
+				font-family: $body-font-family-mac;
+			}
+		}
+	}
+	a {
+		@include body-link-style;
+		
+	}
+} // [end] @mixin base-naver

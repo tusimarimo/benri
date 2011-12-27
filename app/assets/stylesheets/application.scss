@@ -1,0 +1,209 @@
+/*
+ * This is a manifest file that'll automatically include all the stylesheets available in this directory
+ * and any sub-directories. You're free to add application-wide styles to this file and they'll appear at
+ * the top of the compiled file, but it's generally better to create a new file per style scope.
+ *= require_self
+ *= require_tree . 
+*/
+
+@charset "utf-8";
+
+// Import
+@import "core";
+
+// Reset
+@include reset-naver;
+@include reset-option-form-1; // input,button,textareaのボーダーを削除する。
+@include base-naver;
+
+// Layout
+@include Wrap;
+@include Head;
+@include Foot;
+@include Contents;
+
+
+.topLnk {
+	//
+	li {
+		margin-bottom: 20px;
+	}
+	a {
+		display: block;
+		height: 120px;
+		line-height: 120px;
+		border: 3px solid #eee;
+		color: #666;
+		font-size: 50px;
+		text-decoration: none;
+		text-align: center;
+		//
+		&:hover {
+			border: 3px solid #333;
+			color: #333;
+		}
+	}
+}
+
+.lead {
+	padding: 10px 0 30px;
+	font-size: 20px;
+}
+
+.search {
+	margin-bottom: 30px;
+	//
+	.searchBox {
+		@include inline-block;
+		//
+		input {
+			width: 720px;
+			padding: 5px 10px;
+			font-size: 16px;
+			border: 1px solid #DDD;
+		}
+	}
+	.submit {
+		@include inline-block;
+		//
+		input {
+			padding: 5px 10px;
+			background: #55EA13;
+			border: 1px solid #3C3;
+			border-radius: 3px;
+			box-shadow: -1px -1px 3px #33d833 inset, 1px 1px 3px #33d833 inset;
+			font-weight: bold;
+			font-size: 16px;
+			text-decoration: none;
+			color: white;
+		}
+		input:hover {
+			background: #68ED2D;
+			box-shadow: -1px -1px 3px #42dd42 inset, 1px 1px 3px #42dd42 inset;
+			border-color: #56DE56;
+		}
+	}
+}
+
+.form {
+	dl {
+		margin-bottom: 20px;
+	}
+	dt {
+		margin-bottom: 5px;
+		font-weight: bold;
+	}
+	dd {
+		textarea {
+			width: 780px;
+			height: 80px;
+			padding: 10px;
+			font-size: 16px;
+			border: 1px solid #ddd;
+			//
+			&:hover,
+			&:active,
+			&:focus {
+				border-color: #333;
+			}
+		}
+		input {
+			width: 780px;
+			height: 20px;
+			padding: 10px;
+			font-size: 16px;
+			border: 1px solid #ddd;
+			//
+			&:hover,
+			&:active,
+			&:focus {
+				border-color: #333;
+			}
+		}
+		select {
+			width: 200px;
+			height: 30px;
+			font-size: 16px;
+			border: 1px solid #ddd;
+			//
+			&:hover,
+			&:active,
+			&:focus {
+				border-color: #333;
+			}
+		}
+	}
+	dl:first-child {
+		textarea {
+			height: 50px;
+		}
+	}
+	.actions {
+		text-align: center;
+		//
+		input {
+			width: 200px;
+			height: 40px;
+			line-height: 40px;
+			padding-left: 25px;
+			background: #55ea13;
+			border: 1px solid #3c3;
+			border-radius: 3px;
+			box-shadow: -1px -1px 3px #33d833 inset, 1px 1px 3px #33d833 inset;
+			font-weight: bold;
+			font-size: 16px;
+			color: #fff;
+			letter-spacing: 1.2em;
+		}
+		input:hover {
+			background: #68ed2d;
+			box-shadow: -1px -1px 3px #42dd42 inset, 1px 1px 3px #42dd42 inset;
+			border-color: #56de56;
+		}
+	}
+}
+
+.show {
+	dl {
+		margin-bottom: 20px;
+	}
+	dt {
+		margin-bottom: 5px;
+		font-weight: bold;
+	}
+	dd {
+		padding: 0 10px 5px;
+		font-size: 16px;
+	}
+	li {
+		@include inline-block;
+	}
+}
+
+.newBtn,
+.editBtn,
+.showBtn,
+.removeBtn {
+	margin: 0 20px 20px 0;
+	//
+	a {
+		padding: 10px;
+		height: 40px;
+		line-height: 40px;
+		background: #55EA13;
+		border: 1px solid #3C3;
+		border-radius: 3px;
+		box-shadow: -1px -1px 3px #33d833 inset, 1px 1px 3px #33d833 inset;
+		font-weight: bold;
+		font-size: 12px;
+		text-decoration: none;
+		color: white;
+	}
+	a:hover {
+		background: #68ED2D;
+		box-shadow: -1px -1px 3px #42dd42 inset, 1px 1px 3px #42dd42 inset;
+		border-color: #56DE56;
+	}
+}
+
+

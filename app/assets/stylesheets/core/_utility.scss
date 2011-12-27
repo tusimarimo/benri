@@ -1,0 +1,389 @@
+@charset "utf-8";
+
+//
+// Utility
+//
+
+// # @:General
+//
+@mixin link-underline($type, $important: false, $self: false) {
+	@if $important == 'important' or $important == true {
+		$important: ' !important';
+	} @else {
+		$important: '';
+	}
+	@if $self == 'self' or $self == true {
+		$self: '&,';
+	} @else {
+		$self: '';
+	}
+	@if $type == line-to-none {
+		#{$self}
+		&:link,
+		&:visited { text-decoration: underline#{$important}; }
+		&:hover,
+		&:active,
+		&:focus { text-decoration: none#{$important}; }
+	} @else if $type == line {
+		#{$self}
+		&:link,
+		&:visited,
+		&:hover,
+		&:active,
+		&:focus { text-decoration: underline#{$important}; }
+	} @else if $type == none-to-line {
+		#{$self}
+		&:link,
+		&:visited { text-decoration: none#{$important}; }
+		&:hover,
+		&:active,
+		&:focus { text-decoration: underline#{$important}; }
+	} @else if $type == none {
+		#{$self}
+		&:link,
+		&:visited,
+		&:hover,
+		&:active,
+		&:focus { text-decoration: none#{$important}; }
+	}
+}
+
+@mixin img-replacement($width: false, $height: false, $bg-url: false, $bg-position-x: 0, $bg-position-y: 0, $display: inline-block, $margin: false, $valign: false) {
+	@if $display == inline-block {
+		@include inline-block;
+	} @else if $display == block {
+		display: block;
+	}
+	@if $width {
+		width: $width;
+	}
+	@if $height {
+		height: $height;
+	}
+	overflow: hidden;
+	@if $margin {
+		margin: unquote($margin);
+	}
+	padding: 0;
+	border: none;
+	@if $bg-url {
+		background: url(unquote($bg-url)) no-repeat $bg-position-x $bg-position-y;
+	} @else {
+		background-position: $bg-position-x $bg-position-y;
+		background-repeat: no-repeat;
+	}
+	text-align: left;
+	@if $valign {
+		vertical-align: $valign;
+	}
+	text-indent: -9999px;
+	@if $support-ie6 or $support-ie7 {
+		*text-indent: 0;      // IE6,7は背景画像も飛ぶので戻す
+		*line-height: 9999px; // IE6,7はこれでテキストを飛ばす
+		*word-wrap: normal;
+	}
+}
+
+@mixin hidden {
+	position: absolute;
+	left: -9999px;
+	width: 0;
+	height: 0;
+	overflow: hidden;
+	margin: 0;
+	padding: 0;
+}
+
+@mixin print-display-none {
+	@media print {
+		display: none;
+	}
+}
+
+@mixin spacing($property, $direction, $size, $unit: px) {
+	$property      : $property - $direction;
+	$property-value: $size + $unit;
+	$class-prefix  : '';
+	$class-unit    : $unit;
+
+	$class-base-prefix        : MdMargin;  // m
+	$class-base-prefix-padding: MdPadding; // p
+	$class-prefix-top         : Top;       // t
+	$class-prefix-right       : Right;     // r
+	$class-prefix-bottom      : Bottom;    // b
+	$class-prefix-left        : Left;      // l
+	$class-prefix-negative    : N;
+	$class-size-zero-pad      : '0';
+	$class-unit-for-px        : '';
+
+	@if $unit == px {
+		$class-unit: $class-unit-for-px;
+	}
+	@if $property == padding {
+		$class-base-prefix: $class-base-prefix-padding;
+	}
+	@if $direction == top {
+		$class-prefix: $class-base-prefix + $class-prefix-top;
+	} @else if $direction == right {
+		$class-prefix: $class-base-prefix + $class-prefix-right;
+	} @else if $direction == bottom {
+		$class-prefix: $class-base-prefix + $class-prefix-bottom;
+	} @else if $direction == left {
+		$class-prefix: $class-base-prefix + $class-prefix-left;
+	}
+	@if ($size) < 0 {
+		$class-prefix: $class-prefix + $class-prefix-negative;
+		$size        : abs($size); // e.g. -10px -> 10px
+	}
+	@if ($size) < 10 {
+		$size: $class-size-zero-pad + abs($size);
+	}
+	// OUTPUT
+	.#{$class-prefix}#{$size}#{$class-unit} { #{$property}: $property-value !important; }
+
+// Tips: make classes
+// 1)
+//	@for $i from 0 through 10 {
+//		@include spacing(padding, top, $i);
+//		@include spacing(margin, bottom, -$i); // with negative margin/padding
+//	}
+//
+// 2)
+//	$i: 10;
+//	@while $i <= 100 {
+//		@include spacing(margin, right, $i);
+//		$i: $i + 10;
+//	}
+}
+
+@mixin ellipsis {
+	overflow: hidden;
+	@include text-overflow(ellipsis);
+//	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+// # @:Property
+//
+@mixin font-family($type, $important: false) {
+// $type
+//  + body-font-family
+//  + sans-serif
+//  + meiryo
+//  + monospace
+//  + hiragino
+//  + arial
+//  + verdana
+//  + georgia
+//  + tahoma
+//  + courier-new
+	@if $important == 'important' or $important == true {
+		$important: ' !important';
+	} @else {
+		$important: '';
+	}
+	@if $type == body-font-family {
+		font-family: $body-font-family#{$important};
+	} @else if $type == sans-serif {
+		font-family: sans-serif#{$important};
+		@if $support-ie6 {
+			_font-family: 'MS PGothic', sans-serif#{$important};
+		}
+	} @else if $type == meiryo {
+		font-family: Meiryo, 'MS PGothic', sans-serif#{$important};
+	} @else if $type == monospace {
+		font-family: monospace#{$important};
+		@if $support-ie6 {
+			_font-family: 'MS PGothic', monospace#{$important};
+		}
+	} @else if $type == hiragino {
+		font-family: 'Hiragino Kaku Gothic Pro', Meiryo, 'MS PGothic', sans-serif#{$important};
+	} @else if $type == arial {
+		font-family: Arial, Helvetica, sans-serif#{$important};
+//		@if $support-ie6 {
+//			_font-family: 'MS PGothic', Arial, sans-serif#{$important};
+//		}
+	} @else if $type == verdana {
+		font-family: Verdana, Arial, Helvetica, sans-serif#{$important};
+	} @else if $type == georgia {
+		font-family: Georgia, 'Times New Roman', Times, serif#{$important};
+	} @else if $type == tahoma {
+		font-family: Tahoma, Arial, Helvetica, sans-serif#{$important};
+	} @else if $type == courier-new {
+		font-family: 'Courier New', Courier, monospace;
+	}
+}
+
+@mixin inline-block {
+	display: inline-block;
+	@if $support-ie6 or $support-ie7 {
+		*display: inline;
+		*zoom: 1;
+	}
+}
+
+@mixin float($property-value) {
+	@if $support-ie6 {
+		@if $property-value != none {
+			_display: inline; // for double-margin bug
+		}
+	}
+	float: $property-value;
+}
+
+@mixin position-fixed($property-value-ie6: absolute) {
+	position: fixed;
+	@if $support-ie6 {
+		_position: $property-value-ie6;
+	}
+}
+
+@mixin min-width($property-value) {
+	min-width: $property-value;
+	@if $support-ie6 {
+		_width: $property-value;
+	}
+}
+
+@mixin min-height($property-value) {
+	min-height: $property-value;
+	@if $support-ie6 {
+		_height: $property-value;
+	}
+}
+
+@mixin word-break {
+	word-wrap: break-word;
+
+//	display: inline-block\9;
+//	word-wrap: break-word;
+//	word-break: break-all\9;
+}
+
+@mixin opacity($property-value, $l-use-ie-filter: $use-ie-filter) {
+	@if $l-use-ie-filter {
+		-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=#{round($property-value * 100)})"; // for IE8
+		@if $support-ie6 or $support-ie7 {
+			filter: alpha(Opacity=#{round($property-value * 100)}); // for IE6,7
+		}
+	}
+	opacity: $property-value;
+// Usage:
+// @include opacity(0.8);
+// @include opacity(0.8, true);
+// @include opacity(0.8, false);
+}
+
+@mixin outline-none($use-ie-expression) {
+	outline: none;
+	@if $use-ie-expression {
+		hidefocus: expression(hideFocus='true');
+	}
+// Usage:
+// @include outline-none;
+// @include outline-none(true);
+// @include outline-none(false);
+}
+
+@mixin tap-highlight-color-none {
+	// タップ時のカラーを非表示に。
+	-webkit-tap-highlight-color: rgba(#000,0);
+}
+
+// # @:hack
+//
+@mixin clearfix {
+	@if $support-ie6 or $support-ie7 {
+		*zoom: 1;
+	}
+	//
+	&:after {
+		content: "";
+		display: block;
+		clear: both;
+		// [TODO] 下のはもう不要？
+		//visibility: hidden;
+		//height: 0;
+	}
+}
+
+@mixin micro-clearfix {
+// http://nicolasgallagher.com/micro-clearfix-hack/
+// Known support: Firefox 3.5+, Safari 4+, Chrome, Opera 9+, IE 6+
+	@if $support-ie6 or $support-ie7 {
+		*zoom: 1;
+	}
+	//
+	&:before,
+	&:after {
+		content: "";
+		display: table;
+	}
+	&:after {
+		clear: both;
+	}
+}
+
+@mixin hack-legacy-ie-button-width-fix {
+// http://jehiah.cz/a/button-width-in-ie-revised
+	@if $support-ie6 or $support-ie7 {
+		*width: 1;
+		*overflow: visible;
+	}
+}
+
+@mixin hack-fx-remove-button-padding {
+// http://www.aheadcreative.com/removing-unwanted-button-padding-in-firefox/
+	@if $support-mozilla {
+		&::-moz-focus-inner {
+			padding: 0;
+			border: 0;
+		}
+	}
+}
+
+@mixin hack-ios-text-offset-width-fix {
+// http://webtech-walker.com/archive/2011/03/30190850.html
+// http://webtech-walker.com/archive/2011/06/03104808.html
+// 特定のフォントサイズでマルチバイト文字のoffsetWidthが大きい
+	letter-spacing: -0.001em;
+}
+
+// @:Debug
+//
+@mixin debug-show-outline($parent-selector:"body", $level: 8) {
+	$color1: red;
+	$color2: green;
+	$color3: blue;
+	$color4: orange;
+	@if $level >= 1 {
+		#{$parent-selector} > * { outline: 1px solid $color1 !important; }
+	}
+	@if $level >= 2 {
+		#{$parent-selector} > * > * { outline: 1px solid $color2 !important; }
+	}
+	@if $level >= 3 {
+		#{$parent-selector} > * > * > * { outline: 1px solid $color3 !important; }
+	}
+	@if $level >= 4 {
+		#{$parent-selector} > * > * > * > * { outline: 1px solid $color4 !important; }
+	}
+	@if $level >= 5 {
+		#{$parent-selector} > * > * > * > * > * { outline: 1px dotted $color1 !important; }
+	}
+	@if $level >= 6 {
+		#{$parent-selector} > * > * > * > * > * > * { outline: 1px dotted $color2 !important; }
+	}
+	@if $level >= 7 {
+		#{$parent-selector} > * > * > * > * > * > * > * { outline: 1px dotted $color3 !important; }
+	}
+	@if $level >= 8 {
+		#{$parent-selector} > * > * > * > * > * > * > * > * { outline: 1px dotted $color4 !important; }
+	}
+//
+// [USAGE]
+// @include debug-show-outline;
+// @include debug-show-outline(".selector", 4);
+// @include debug-show-outline($level: 6);
+}
+

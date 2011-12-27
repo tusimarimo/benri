@@ -1,0 +1,71 @@
+//--------------------------------------------------
+// Layout
+//--------------------------------------------------
+$LyWrap-width: 800px;
+$LyContents-h-padding: 20px; // LyContentsの左右のpadding
+$body-h-space: 10px; // ブラウザ縮小時のブラウザ枠とコンテンツ間の余白
+
+@mixin Wrap {
+	/*
+	--------------------------------------------------
+	@:Body, LyWrap
+	--------------------------------------------------
+	*/
+	body {
+		min-width : $LyWrap-width + ($body-h-space * 2);
+		background: $body-bg-color;
+	}
+
+	.wrap {
+		width: $LyWrap-width;
+		margin: 0 auto;
+	}
+}
+
+@mixin Head {
+	/*
+	--------------------------------------------------
+	@:Header
+	--------------------------------------------------
+	*/
+	header {
+		padding: 50px 0 30px;
+		text-align: right;
+		//
+		h1 {
+			font-family: 'Raleway', cursive;
+			font-size: 50px;
+			//
+			a {
+				color: #000 !important;
+				text-decoration: none !important;
+				//
+				&:hover {
+					text-decoration: underline !important;
+				}
+			}
+		}
+	}
+} // [end] mixin LyHead
+
+@mixin Foot {
+	/*
+	--------------------------------------------------
+	@:Footer
+	--------------------------------------------------
+	*/
+	footer {
+		padding: 20px 0 50px;
+		text-align: center;
+	}
+} // [end] mixin LyFoot
+
+@mixin Contents {
+	/*
+	--------------------------------------------------
+	@:Contents
+	--------------------------------------------------
+	*/
+
+}
+

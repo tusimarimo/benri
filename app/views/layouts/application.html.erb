@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Benri</title>
+<link href='http://fonts.googleapis.com/css?family=Raleway:100' rel='stylesheet' type='text/css'>
+<%= stylesheet_link_tag    "application" %>
+<%= javascript_include_tag "application" %>
+<%= csrf_meta_tags %>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+<h1><a href="/">Bug Management Tool</a></h1>
+</header>
+
+<%= yield %>
+
+<footer>
+<p>© 2011 naver SUI</p>
+</footer>
+
+<!-- /.wrap --></div>
+</body>
+</html>

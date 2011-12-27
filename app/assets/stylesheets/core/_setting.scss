@@ -1,0 +1,100 @@
+//
+// Global Setting
+//
+
+// @:Debug
+//--------------------------------------------------
+$debug-show-comment: false;
+
+// @:HTML5
+//--------------------------------------------------
+$use-html5: true;
+
+// @:Browser
+//--------------------------------------------------
+
+// # Support
+$support-ie6: false;
+$support-ie7: true;
+$support-ie8: true;
+$support-mozilla: true;
+$support-webkit : true; // Chrome, Safari
+$support-opera  : true;
+
+// # Vendor-prefixed CSS Property
+$use-prefix-webkit: true;
+$use-prefix-moz   : true;
+$use-prefix-ms    : true;
+$use-prefix-o     : true;
+
+// # IE
+$use-ie-filter    : false;
+$use-ie-expression: false;
+
+// @:Path
+//--------------------------------------------------
+
+// # Project
+$path-pj : "";
+$path-img: "#{$path-pj}/img";
+
+// ## For common images
+$path-sprite_common: "#{$path-img}/sprite_common.png?110825";
+$path-sprite_MdBtn: "#{$path-img}/sprite_MdBtn.png?110822";
+
+// @:Body Style
+//--------------------------------------------------
+
+// # color
+$body-color   : #333;
+$body-bg-color: #fdfdfd;
+
+$body-link-color-normal : #2d86b2;
+$body-link-color-visited: $body-link-color-normal;
+$body-link-color-hover  : $body-link-color-normal;
+$body-link-color-active : $body-link-color-normal;
+$body-link-color-focus  : $body-link-color-normal;
+
+// # text
+$body-font-size  : 13px;
+$body-line-height: 1.231; // about 16px
+$body-font-family: "sans-serif";
+$body-font-family-ie : "'MS PGothic', arial, sans-serif\0/";
+$body-font-family-win: false;
+$body-font-family-mac: "sans-serif";
+
+@mixin body-text-style {
+	line-height: $body-line-height;
+	color: $body-color;
+	font: {
+		family: #{$body-font-family};
+		family: #{$body-font-family-ie};
+		size: $body-font-size;
+	}
+}
+
+// # link style
+@mixin body-link-style {
+	&:link,
+	&:visited {
+		color: $body-link-color-normal;
+		text-decoration: underline;
+	}
+	&:hover,
+	&:active,
+	&:focus {
+		color: $body-link-color-hover;
+		text-decoration: none;
+	}
+	//@include link-underline(line);
+}
+
+// @:data URI
+//--------------------------------------------------
+
+// # Icon, Button
+//$dataURI-ico_plus01: "*****";
+//$dataURI-MdBtn01Save01: "*****";
+
+// # Background
+//$dataURI-bg_line01: "*****";

@@ -1,0 +1,33 @@
+<%= form_for(@bug) do |f| %>
+	<% if @bug.errors.any? %>
+		<div id="error_explanation">
+			<h2><%= pluralize(@bug.errors.count, "error") %> prohibited this bug from being saved:</h2>
+
+			<ul>
+				<% @bug.errors.full_messages.each do |msg| %>
+					<li><%= msg %></li>
+				<% end %>
+			</ul>
+		</div>
+	<% end %>
+
+	<div class="form">
+		<dl>
+			<dt><%= f.label :"バグ" %></dd>
+			<dd><%= f.text_area :title %></dd>
+		</dl>
+		<dl>
+			<dt><%= f.label :"発生するブラウザ" %></dt>
+			<dd><%= select_tag('browser', options_for_select({'IE7'=>1,'IE8'=>2,'Chrome'=>3})) %></dd>
+		</dl>
+		<dl>
+			<dt><%= f.label :"詳細" %></dt>
+			<dd><%= f.text_area :detail %></dd>
+		</dl>
+		<dl>
+			<dt><%= f.label :"対処法" %></dt>
+			<dd><%= f.text_area :process %></dd>
+		</dl>
+		<p class="actions"><%= f.submit :"登録" %></p>
+	</div>
+<% end %>

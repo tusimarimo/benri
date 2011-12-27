@@ -1,0 +1,31 @@
+<%= form_for(@browser) do |f| %>
+	<% if @browser.errors.any? %>
+		<div id="error_explanation">
+		<h2><%= pluralize(@browser.errors.count, "error") %> prohibited this browser from being saved:</h2>
+
+		<ul>
+		<% @browser.errors.full_messages.each do |msg| %>
+			<li><%= msg %></li>
+		<% end %>
+		</ul>
+		</div>
+	<% end %>
+
+<!--
+	<div class="field">
+		<%= f.label :id %><br />
+		<%= f.number_field :id %>
+	</div>
+-->
+	<div class="form">
+		<dl>
+			<dt><%= f.label :"ブラウザ" %></dt>
+			<dd><%= f.text_field :name %></dd>
+		</dl>
+		<dl>
+			<dt><%= f.label :"バージョン" %></dd>
+			<dd><%= f.text_field :version %></dd>
+		</dl>
+		<p class="actions"><%= f.submit :"登録" %></p>
+	</div>
+<% end %>
