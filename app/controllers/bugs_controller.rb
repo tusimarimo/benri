@@ -13,11 +13,11 @@ class BugsController < ApplicationController
   # GET /bugs/1
   # GET /bugs/1.json
   def search
-    @bug = Bug.find(params[:id])
+    @bugs = Bug.all
 
     respond_to do |format|
       format.html # search.html.erb
-      format.json { render json: @bug }
+      format.json { render json: @bugs }
     end
   end
 

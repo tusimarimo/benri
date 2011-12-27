@@ -1,6 +1,12 @@
 Benri::Application.routes.draw do
   resources :bugs
-  get "bugs/search"
+
+  #get "bugs/search"
+  resources :bugs do
+    collection do
+      get :search
+    end
+  end
 
   resources :browsers
 
